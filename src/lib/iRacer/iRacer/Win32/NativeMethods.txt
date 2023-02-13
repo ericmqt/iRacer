@@ -1,0 +1,3 @@
+CreateEvent
+PostMessage
+RegisterWindowMessage
