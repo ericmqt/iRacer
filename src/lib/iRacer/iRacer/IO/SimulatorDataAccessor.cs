@@ -1,4 +1,5 @@
-﻿using DotNext.IO.MemoryMappedFiles;
+﻿using System.Diagnostics.CodeAnalysis;
+using DotNext.IO.MemoryMappedFiles;
 
 namespace iRacer.IO;
 
@@ -7,7 +8,9 @@ namespace iRacer.IO;
 /// </summary>
 internal sealed class SimulatorDataAccessor : ISimulatorDataAccessor
 {
-    private readonly MemoryMappedDirectAccessor _data;
+    [SuppressMessage("Style", "IDE0044:Add readonly modifier",
+        Justification = "MemoryMappedDirectAccessor.Dispose sets its value to default(MemoryMappedDirectAccessor), readonly modifier prevents this")]
+    private MemoryMappedDirectAccessor _data;
     private bool _isDisposed;
 
     public SimulatorDataAccessor(MemoryMappedDirectAccessor dataAccessor)
