@@ -1,0 +1,31 @@
+<Project>
+	<PropertyGroup>
+		<RepositoryRootDirectory>$(MSBuildThisFileDirectory)</RepositoryRootDirectory>
+		<RepositoryAssetsDirectory>$(RepositoryRootDirectory)\assets</RepositoryAssetsDirectory>
+		<RepositoryBinDirectory>$(RepositoryRootDirectory)\bin</RepositoryBinDirectory>
+		<RepositoryDefaultOutputPath>$(RepositoryBinDirectory)\$(Configuration)-$(Platform)</RepositoryDefaultOutputPath>
+		<RepositoryPackageOutputDirectory>$(RepositoryDefaultOutputPath)\bin\nupkg</RepositoryPackageOutputDirectory>
+		<RepositorySourceDirectory>$(RepositoryRootDirectory)\src</RepositorySourceDirectory>
+		<RepositoryTestOutputPath>$(RepositoryDefaultOutputPath)\tests</RepositoryTestOutputPath>
+	</PropertyGroup>
+	
+	<PropertyGroup>
+		<OutputPath>$(RepositoryDefaultOutputPath)\$(MSBuildProjectName)</OutputPath>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<LangVersion>latest</LangVersion>
+		<WarningsAsErrors>CA2016,CS8613</WarningsAsErrors>
+	</PropertyGroup>
+
+	<!-- Assembly information -->
+	<PropertyGroup>
+		<Authors>Eric Smith</Authors>
+		<Copyright>Copyright © 2022 Eric Smith.</Copyright>
+	</PropertyGroup>
+
+	<!-- NuGet packaging -->
+	<PropertyGroup>
+		<PackageOutputPath>$(RepositoryPackageOutputDirectory)</PackageOutputPath>
+	</PropertyGroup>
+</Project>
