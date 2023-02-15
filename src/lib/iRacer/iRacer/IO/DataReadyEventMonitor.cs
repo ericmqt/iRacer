@@ -74,7 +74,7 @@ internal sealed class DataReadyEventMonitor : IDisposable
                 return _lastSignalTimestamp;
             }
         }
-        set
+        private set
         {
             lock (_lastSignalTimestampLock)
             {
