@@ -8,6 +8,7 @@ public static class DataFileConstants
     public const int MaxDescriptionLength = 64;
     public const int MaxVariableBuffers = 4;
     public const int VariableBufferHeaderArrayLength = VariableDataBufferHeaderLength * MaxVariableBuffers;
+    public const int VariableDataBufferHeaderArrayOffset = 48;
     public const int VariableDataBufferHeaderLength = 16;
     public const int VariableHeaderLength = 144;
 }

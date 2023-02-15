@@ -13,5 +13,4 @@ public static class DataFileHeaderFieldOffsets
     public const int BufferCount = 32;
     public const int BufferLength = 36;
     public const int Padding = 40;
-    //public const int VariableDataBufferHeaderArray = 48;
 }
