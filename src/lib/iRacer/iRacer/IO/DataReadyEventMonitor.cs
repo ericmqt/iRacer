@@ -63,27 +63,6 @@ internal sealed class DataReadyEventMonitor : IDisposable
     public bool IsTimedOut { get; private set; }
 
     /// <summary>
-    /// Gets a <see cref="DateTimeOffset"/> indicating the most recent data-ready signal received.
-    /// </summary>
-    public DateTimeOffset LastSignalReceived
-    {
-        get
-        {
-            lock (_lastSignalTimestampLock)
-            {
-                return _lastSignalTimestamp;
-            }
-        }
-        private set
-        {
-            lock (_lastSignalTimestampLock)
-            {
-                _lastSignalTimestamp = value;
-            }
-        }
-    }
-
-    /// <summary>
     /// Signals the monitoring thread for cancellation and stops the monitor.
     /// </summary>
     public void Cancel()
@@ -117,8 +96,6 @@ internal sealed class DataReadyEventMonitor : IDisposable
 
             if (waitIndex == 0)
             {
-                LastSignalReceived = DateTimeOffset.UtcNow;
-
                 if (ReadSimulatorStatus() == 1)
                 {
                     IsActive = true;
@@ -146,7 +123,6 @@ internal sealed class DataReadyEventMonitor : IDisposable
 
             if (waitIndex == 0)
             {
-                LastSignalReceived = DateTimeOffset.UtcNow;
                 IsTimedOut = false;
 
                 // Signal to waiting threads
