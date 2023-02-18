@@ -28,6 +28,7 @@ public sealed class SimulatorDataConnection : IDisposable
         get { return IsOpen ? _connectionId : -1; }
     }
 
+    [MemberNotNullWhen(true, nameof(_dataFile))]
     [MemberNotNullWhen(true, nameof(_dataReadyMonitor))]
     public bool IsOpen { get; private set; }
 
@@ -45,6 +46,17 @@ public sealed class SimulatorDataConnection : IDisposable
 
         _dataFile?.Dispose();
         _dataFile = null;
+    }
+
+    internal ISimulatorDataAccessor CreateDataAccessor()
+    {
+        if (!IsOpen)
+        {
+            // TODO: Better exception?
+            throw new InvalidOperationException("The connection is closed.");
+        }
+
+        return _dataFile.CreateDataAccessor();
     }
 
     public bool Open()
