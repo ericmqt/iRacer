@@ -5,7 +5,7 @@ using Microsoft.Win32.SafeHandles;
 namespace iRacer.IO;
 internal sealed class DataReadyEventMonitor : IDisposable
 {
-    private long _activityTimeoutMs;
+    private int _activityTimeoutMs;
     private readonly AutoResetEvent _dataReadyEvent;
     private readonly SafeWaitHandle _hDataReadyEvent;
     private readonly DataReadyWaiter _dataReadyWaiter;
@@ -44,7 +44,7 @@ internal sealed class DataReadyEventMonitor : IDisposable
         set
         {
             ValidateActivityTimeout(value);
-            Interlocked.Exchange(ref _activityTimeoutMs, (long)value.TotalMilliseconds);
+            Interlocked.Exchange(ref _activityTimeoutMs, (int)value.TotalMilliseconds);
         }
     }
 
@@ -90,7 +90,7 @@ internal sealed class DataReadyEventMonitor : IDisposable
 
         while (!CancellationToken.IsCancellationRequested)
         {
-            var waitIndex = WaitHandle.WaitAny(waitHandles, ActivityTimeout);
+            var waitIndex = WaitHandle.WaitAny(waitHandles, _activityTimeoutMs);
 
             if (waitIndex == 0)
             {
@@ -114,7 +114,7 @@ internal sealed class DataReadyEventMonitor : IDisposable
         while (!CancellationToken.IsCancellationRequested)
         {
             // Wait for data-ready signal, cancellation, or timeout
-            var waitIndex = WaitHandle.WaitAny(waitHandles, ActivityTimeout);
+            var waitIndex = WaitHandle.WaitAny(waitHandles, _activityTimeoutMs);
 
             // Toggle IsActive based on current header value
             IsActive = ReadSimulatorStatus() == 1;
