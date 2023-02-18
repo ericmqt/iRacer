@@ -11,8 +11,6 @@ internal sealed class DataReadyEventMonitor : IDisposable
     private readonly DataReadyWaiter _dataReadyWaiter;
     private readonly ISimulatorDataAccessor _dataAccessor;
     private bool _isDisposed;
-    private DateTimeOffset _lastSignalTimestamp;
-    private readonly object _lastSignalTimestampLock = new object();
     private readonly Action? _onActivated;
     private readonly Thread _thread;
     private readonly CancellationTokenSource _threadCancellationTokenSource;
