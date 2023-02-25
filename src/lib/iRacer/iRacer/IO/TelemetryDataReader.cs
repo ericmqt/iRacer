@@ -24,7 +24,7 @@ public class TelemetryDataReader : IDisposable
     public int GetActiveVariableBufferIndex()
     {
         var bufferCount = ReadVariableBufferCount();
-        var variableBufferHeaders = ReadVariableBufferHeaderArray(bufferCount);
+        var variableBufferHeaders = ReadVariableBufferHeaders(bufferCount);
 
         int activeBufferIndex = 0;
 
@@ -57,7 +57,7 @@ public class TelemetryDataReader : IDisposable
         return MemoryMarshal.Read<int>(DataFileHeaderSpans.VariableDataBufferLength(_dataAccessor.Span));
     }
 
-    public VariableBufferHeader[] ReadVariableBufferHeaderArray(int count)
+    public VariableBufferHeader[] ReadVariableBufferHeaders(int count)
     {
         if (count < 0 || count > DataFileConstants.MaxVariableBuffers)
         {
@@ -80,6 +80,40 @@ public class TelemetryDataReader : IDisposable
             var headerSpan = arraySpan.Slice(offset, DataFileConstants.VariableDataBufferHeaderLength);
 
             headers[i] = MemoryMarshal.Read<VariableBufferHeader>(headerSpan);
+        }
+
+        return headers;
+    }
+
+    public VariableHeader[] ReadVariableHeaders()
+    {
+        var dataFileHeaderReader = _dataAccessor.CreateHeaderReader();
+
+        // Read the count and offset to the array of headers
+        var variableCount = dataFileHeaderReader.ReadVariableCount();
+        var variableHeaderOffset = dataFileHeaderReader.ReadVariableHeaderOffset();
+
+        // Read the headers
+        return ReadVariableHeadersUnsafe(variableCount, variableHeaderOffset);
+    }
+
+    public VariableHeader[] ReadVariableHeaders(in DataFileHeader dataFileHeader)
+    {
+        return ReadVariableHeadersUnsafe(dataFileHeader.VariableCount, dataFileHeader.VariableHeaderOffset);
+    }
+
+    /// <summary>
+    /// Reads variable headers without any local bounds checking.
+    /// </summary>
+    private VariableHeader[] ReadVariableHeadersUnsafe(int variableCount, int variableHeaderOffset)
+    {
+        var headers = new VariableHeader[variableCount];
+
+        for (int i = 0; i < variableCount; i++)
+        {
+            var span = VariableDataSpans.VariableHeader(i, _dataAccessor.Span, variableHeaderOffset);
+
+            headers[i] = MemoryMarshal.Read<VariableHeader>(span);
         }
 
         return headers;

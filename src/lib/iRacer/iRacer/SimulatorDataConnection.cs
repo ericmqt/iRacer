@@ -48,7 +48,7 @@ public sealed class SimulatorDataConnection : IDisposable
         _dataFile = null;
     }
 
-    internal ISimulatorDataAccessor CreateDataAccessor()
+    public ISimulatorDataAccessor CreateDataAccessor()
     {
         if (!IsOpen)
         {
