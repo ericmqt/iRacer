@@ -26,6 +26,8 @@ internal sealed class DataReadyEventMonitor : IDisposable
         _dataAccessor = dataAccessor ?? throw new ArgumentNullException(nameof(dataAccessor));
         _onActivated = onActivated;
 
+        ActivityTimeout = TimeSpan.FromSeconds(5);
+
         _dataReadyEvent = new AutoResetEvent(initialState: false) { SafeWaitHandle = _hDataReadyEvent };
         _threadCancellationTokenSource = new CancellationTokenSource();
 
@@ -99,6 +101,8 @@ internal sealed class DataReadyEventMonitor : IDisposable
                     IsActive = true;
 
                     _onActivated?.Invoke();
+
+                    break;
                 }
             }
             else if (waitIndex == 1)
