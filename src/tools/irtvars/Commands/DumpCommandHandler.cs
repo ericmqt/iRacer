@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using iRacer.IO;
+using iRacer.IO.Primitives;
+using iRacer.Tools.Telemetry;
 
 namespace iRacer.Tools.TelemetryVariables.Commands;
 internal class DumpCommandHandler
@@ -22,54 +24,102 @@ internal class DumpCommandHandler
     {
         using var connection = new SimulatorDataConnection();
 
+        Console.WriteLine("Connecting to simulator");
+
         if (!await OpenConnectionAsync(connection, TimeSpan.FromSeconds(1), cancellationToken).ConfigureAwait(false))
         {
+            Console.WriteLine("Unable to connect to simulator");
             return -1;
         }
 
-        if (!await WaitForFirstDataReadyAsync(connection, cancellationToken).ConfigureAwait(false))
+        Console.WriteLine("Connected. Waiting for simulator activity");
+
+        if (!await WaitForSimulatorStartup(connection, cancellationToken).ConfigureAwait(false))
         {
-            // TODO: Write output
+            // We were canceled, so just exit without any ceremony.
+
+            // TODO: Use distinct exit codes
+
             return -1;
         }
 
-        using var dataAccessor = connection.CreateDataAccessor();
+        // Pull telemetry variables from the simulator
+        Console.WriteLine("Reading telemetry variables");
+        var telemetryVariables = GetTelemetryVariables(connection);
 
-        while (!cancellationToken.IsCancellationRequested)
+        Console.WriteLine($"Found {telemetryVariables.Count} telemetry variables");
+
+        // Write variables to file
+        var outputFileName = GetOutputFileName();
+
+        using (var stream = File.CreateText(outputFileName))
         {
-            var header = dataAccessor.ReadHeader();
-
-            if (header.Status > 0)
-            {
-                // Dump variables
-                using var telemetryReader = new TelemetryDataReader(connection);
-
-                var variableHeaders = telemetryReader.ReadVariableHeaders(header);
-
-                // TODO: Write variables
-
-                break;
-            }
+            await VariableInfoCollectionSerializer.WriteJsonAsync(telemetryVariables, stream);
         }
+
+        Console.WriteLine($"Output: {outputFileName}");
 
         return 0;
     }
 
-    private void GetOutputFileName()
+    private VariableInfoCollection GetTelemetryVariables(SimulatorDataConnection connection)
     {
-        if (Options.OutputFileOrDirectory is null)
+        if (connection is null)
         {
-            // TODO
+            throw new ArgumentNullException(nameof(connection));
         }
 
+        if (!connection.IsOpen)
+        {
+            throw new ArgumentException($"Connection is not open.", nameof(connection));
+        }
+
+        if (!connection.IsActive)
+        {
+            throw new ArgumentException($"Connection is not active.", nameof(connection));
+        }
+
+        var variableCollection = new VariableInfoCollection();
+
+        using var dataAccessor = connection.CreateDataAccessor();
+        using var telemetryReader = new TelemetryDataReader(connection);
+
+        var header = dataAccessor.ReadHeader();
+
+        var variableHeaders = telemetryReader.ReadVariableHeaders(header);
+
+        for (int i = 0; i < variableHeaders.Length; i++)
+        {
+            var varHeader = variableHeaders[i];
+
+            var varInfo = new VariableInfo(
+                VariableHeader.GetNameString(varHeader),
+                (VariableValueType)varHeader.Type,
+                varHeader.Count,
+                VariableHeader.GetDescriptionString(varHeader),
+                VariableHeader.GetUnitString(varHeader),
+                varHeader.CountAsTime);
+
+            variableCollection.TryAdd(varInfo);
+        }
+
+        return variableCollection;
+    }
+
+    private string GetOutputFileName()
+    {
         if (Options.OutputFileOrDirectory is DirectoryInfo outputDir)
         {
-            throw new NotImplementedException();
+            var name = $"TelemetryVariables_{DateTimeOffset.UtcNow:yyyyMMddHHmmss}.json";
+
+            return Path.Combine(outputDir.FullName, name);
         }
         else if (Options.OutputFileOrDirectory is FileInfo outputFile)
         {
-            throw new NotImplementedException();
+            return outputFile.FullName;
         }
+
+        throw new InvalidOperationException();
     }
 
     private async Task<bool> OpenConnectionAsync(SimulatorDataConnection connection, TimeSpan retryInterval, CancellationToken cancellationToken = default)
@@ -102,7 +152,7 @@ internal class DumpCommandHandler
         return false;
     }
 
-    private async Task<bool> WaitForFirstDataReadyAsync(SimulatorDataConnection connection, CancellationToken cancellationToken = default)
+    private async Task<bool> WaitForSimulatorStartup(SimulatorDataConnection connection, CancellationToken cancellationToken = default)
     {
         while (!cancellationToken.IsCancellationRequested)
         {

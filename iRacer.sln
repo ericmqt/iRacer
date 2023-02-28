@@ -15,6 +15,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{CB1FE45F
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "irtvars", "src\tools\irtvars\irtvars.csproj", "{79C792E6-ABA8-42F2-A5B5-09454C01044F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iRacer.Tools.Telemetry", "src\lib\iRacer.Tools.Telemetry\iRacer.Tools.Telemetry.csproj", "{7922F938-BACB-4556-8AA9-0CAC05652ED1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{79C792E6-ABA8-42F2-A5B5-09454C01044F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{79C792E6-ABA8-42F2-A5B5-09454C01044F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{79C792E6-ABA8-42F2-A5B5-09454C01044F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7922F938-BACB-4556-8AA9-0CAC05652ED1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7922F938-BACB-4556-8AA9-0CAC05652ED1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7922F938-BACB-4556-8AA9-0CAC05652ED1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7922F938-BACB-4556-8AA9-0CAC05652ED1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -41,6 +47,7 @@ Global
 		{5E692DE6-ADDF-444B-8EBA-F7EEECDEB13A} = {EA12305E-A0E4-4F00-9ED4-144622C12C67}
 		{B07225F0-1635-4511-B801-61E92ACD6A9B} = {144D07AB-3C86-4CF7-BC70-8A415D84262B}
 		{79C792E6-ABA8-42F2-A5B5-09454C01044F} = {CB1FE45F-8D4B-420C-8731-1433F1E40DBE}
+		{7922F938-BACB-4556-8AA9-0CAC05652ED1} = {EA12305E-A0E4-4F00-9ED4-144622C12C67}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DF1C53D0-C31D-406E-AD9D-3CB5E30979CD}

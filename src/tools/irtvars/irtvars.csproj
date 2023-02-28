@@ -13,6 +13,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\..\lib\iRacer.Tools.Telemetry\iRacer.Tools.Telemetry.csproj" />
 	  <ProjectReference Include="..\..\lib\iRacer\iRacer\iRacer.csproj" />
 	</ItemGroup>
 

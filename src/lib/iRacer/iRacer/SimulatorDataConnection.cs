@@ -28,17 +28,25 @@ public sealed class SimulatorDataConnection : IDisposable
         get { return IsOpen ? _connectionId : -1; }
     }
 
+    public bool IsActive
+    {
+        get
+        {
+            if (_dataReadyMonitor is null)
+            {
+                return false;
+            }
+
+            return _dataReadyMonitor.IsActive;
+        }
+    }
+
     [MemberNotNullWhen(true, nameof(_dataFile))]
     [MemberNotNullWhen(true, nameof(_dataReadyMonitor))]
     public bool IsOpen { get; private set; }
 
     public void Close()
     {
-        if (!IsOpen)
-        {
-            return;
-        }
-
         IsOpen = false;
 
         _dataReadyMonitor?.Dispose();
