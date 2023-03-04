@@ -3,17 +3,17 @@
 namespace iRacer.IO.Primitives;
 
 [StructLayout(LayoutKind.Explicit, Size = DataFileConstants.VariableDataBufferHeaderLength)]
-public struct VariableBufferHeader
+public struct TelemetryBufferHeader
 {
     /// <summary>
     /// Used to detect changes in data.
     /// </summary>
-    [FieldOffset(VariableBufferHeaderOffsets.TickCount)]
+    [FieldOffset(TelemetryBufferHeaderOffsets.TickCount)]
     public int TickCount;
 
-    [FieldOffset(VariableBufferHeaderOffsets.BufferOffset)]
+    [FieldOffset(TelemetryBufferHeaderOffsets.BufferOffset)]
     public int BufferOffset;
 
-    [FieldOffset(VariableBufferHeaderOffsets.Padding)]
+    [FieldOffset(TelemetryBufferHeaderOffsets.Padding)]
     public ulong Padding;
 }

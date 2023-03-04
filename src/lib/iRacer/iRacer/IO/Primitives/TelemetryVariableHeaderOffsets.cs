@@ -1,6 +1,6 @@
 ﻿namespace iRacer.IO.Primitives;
 
-public static class VariableHeaderOffsets
+public static class TelemetryVariableHeaderOffsets
 {
     public const int TypeOffset = 0;
     public const int OffsetOffset = 4;

@@ -81,23 +81,20 @@ internal class DumpCommandHandler
 
         var variableCollection = new VariableInfoCollection();
 
-        using var dataAccessor = connection.CreateDataAccessor();
-        using var telemetryReader = new TelemetryDataReader(connection);
+        using var reader = new SimulatorDataReader(connection);
 
-        var header = dataAccessor.ReadHeader();
-
-        var variableHeaders = telemetryReader.ReadVariableHeaders(header);
+        var variableHeaders = reader.ReadTelemetryVariableHeaders();
 
         for (int i = 0; i < variableHeaders.Length; i++)
         {
             var varHeader = variableHeaders[i];
 
             var varInfo = new VariableInfo(
-                VariableHeader.GetNameString(varHeader),
+                TelemetryVariableHeader.GetNameString(varHeader),
                 (VariableValueType)varHeader.Type,
                 varHeader.Count,
-                VariableHeader.GetDescriptionString(varHeader),
-                VariableHeader.GetUnitString(varHeader),
+                TelemetryVariableHeader.GetDescriptionString(varHeader),
+                TelemetryVariableHeader.GetUnitString(varHeader),
                 varHeader.CountAsTime);
 
             variableCollection.TryAdd(varInfo);

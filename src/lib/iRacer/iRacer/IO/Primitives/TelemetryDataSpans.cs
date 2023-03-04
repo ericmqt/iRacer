@@ -6,10 +6,10 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace iRacer.IO.Primitives;
-public static class VariableDataSpans
+public static class TelemetryDataSpans
 {
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static ReadOnlySpan<byte> VariableDataBufferHeader(int index, ReadOnlySpan<byte> data)
+    public static ReadOnlySpan<byte> TelemetryBufferHeader(int index, ReadOnlySpan<byte> data)
     {
         if (index < 0 || index >= DataFileConstants.MaxVariableBuffers)
         {
@@ -23,13 +23,30 @@ public static class VariableDataSpans
         return data.Slice(offset, DataFileConstants.VariableDataBufferHeaderLength);
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static ReadOnlySpan<byte> TelemetryBufferHeaderTickCount(int index, ReadOnlySpan<byte> data)
+    {
+        if (index < 0 || index >= DataFileConstants.MaxVariableBuffers)
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(index),
+                $"Value must be greater than or equal to zero and less than the constant {nameof(DataFileConstants)}.{nameof(DataFileConstants.MaxVariableBuffers)}.");
+        }
+
+        var offset = DataFileConstants.VariableDataBufferHeaderArrayOffset
+            + (index * DataFileConstants.VariableDataBufferHeaderLength)
+            + TelemetryBufferHeaderOffsets.TickCount;
+
+        return data.Slice(offset, sizeof(int));
+    }
+
     /// <summary>
-    /// Gets a span for the array of <see cref="VariableBufferHeader"/> values.
+    /// Gets a span for the array of <see cref="Primitives.TelemetryBufferHeader"/> values.
     /// </summary>
     /// <param name="data"></param>
     /// <returns></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static ReadOnlySpan<byte> VariableDataBufferHeaderArray(ReadOnlySpan<byte> data)
+    public static ReadOnlySpan<byte> TelemetryBufferHeaderArray(ReadOnlySpan<byte> data)
     {
         return data.Slice(DataFileConstants.VariableDataBufferHeaderArrayOffset, DataFileConstants.VariableBufferHeaderArrayLength);
     }

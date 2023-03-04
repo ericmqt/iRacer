@@ -4,30 +4,30 @@ using System.Text;
 namespace iRacer.IO.Primitives;
 
 [StructLayout(LayoutKind.Explicit)]
-public unsafe struct VariableHeader
+public unsafe struct TelemetryVariableHeader
 {
-    [FieldOffset(VariableHeaderOffsets.TypeOffset)]
+    [FieldOffset(TelemetryVariableHeaderOffsets.TypeOffset)]
     public int Type;
 
-    [FieldOffset(VariableHeaderOffsets.OffsetOffset)]
+    [FieldOffset(TelemetryVariableHeaderOffsets.OffsetOffset)]
     public int Offset;
 
-    [FieldOffset(VariableHeaderOffsets.CountOffset)]
+    [FieldOffset(TelemetryVariableHeaderOffsets.CountOffset)]
     public int Count;
 
-    [FieldOffset(VariableHeaderOffsets.CountAsTimeOffset)]
+    [FieldOffset(TelemetryVariableHeaderOffsets.CountAsTimeOffset)]
     public bool CountAsTime;
 
-    [FieldOffset(VariableHeaderOffsets.NameOffset)]
+    [FieldOffset(TelemetryVariableHeaderOffsets.NameOffset)]
     public fixed byte Name[DataFileConstants.MaxStringLength];
 
-    [FieldOffset(VariableHeaderOffsets.DescriptionOffset)]
+    [FieldOffset(TelemetryVariableHeaderOffsets.DescriptionOffset)]
     public fixed byte Description[DataFileConstants.MaxDescriptionLength];
 
-    [FieldOffset(VariableHeaderOffsets.UnitOffset)]
+    [FieldOffset(TelemetryVariableHeaderOffsets.UnitOffset)]
     public fixed byte Unit[DataFileConstants.MaxStringLength];
 
-    public static string GetDescriptionString(in VariableHeader header)
+    public static string GetDescriptionString(in TelemetryVariableHeader header)
     {
         fixed (byte* pDescription = header.Description)
         {
@@ -36,7 +36,7 @@ public unsafe struct VariableHeader
         }
     }
 
-    public static string GetNameString(in VariableHeader header)
+    public static string GetNameString(in TelemetryVariableHeader header)
     {
         fixed (byte* pName = header.Name)
         {
@@ -45,7 +45,7 @@ public unsafe struct VariableHeader
         }
     }
 
-    public static string? GetUnitString(in VariableHeader header)
+    public static string? GetUnitString(in TelemetryVariableHeader header)
     {
         fixed (byte* pUnit = header.Unit)
         {

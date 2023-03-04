@@ -8,16 +8,16 @@ using iRacer.IO.Primitives;
 namespace iRacer.Telemetry;
 public class TelemetryDataInfo
 {
-    public TelemetryDataInfo(VariableHeader variableHeader)
+    public TelemetryDataInfo(TelemetryVariableHeader variableHeader)
     {
         Count = variableHeader.Count;
         CountAsTime = variableHeader.CountAsTime;
         Offset = variableHeader.Offset;
         Type = (TelemetryDataType)variableHeader.Type;
 
-        Name = VariableHeader.GetNameString(variableHeader);
-        Description = VariableHeader.GetDescriptionString(variableHeader);
-        Unit = VariableHeader.GetUnitString(variableHeader);
+        Name = TelemetryVariableHeader.GetNameString(variableHeader);
+        Description = TelemetryVariableHeader.GetDescriptionString(variableHeader);
+        Unit = TelemetryVariableHeader.GetUnitString(variableHeader);
     }
 
     public int Count { get; }

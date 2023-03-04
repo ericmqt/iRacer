@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 using iRacer.IO.Primitives;
 
 namespace iRacer.IO;
-public class TelemetryDataReader : IDisposable
+public class SimulatorDataReader : IDisposable
 {
     private readonly ISimulatorDataAccessor _dataAccessor;
     private bool _isDisposed;
 
-    public TelemetryDataReader(SimulatorDataConnection connection)
+    public SimulatorDataReader(SimulatorDataConnection connection)
     {
         Connection = connection ?? throw new ArgumentNullException(nameof(connection));
 
@@ -21,43 +21,47 @@ public class TelemetryDataReader : IDisposable
 
     public SimulatorDataConnection Connection { get; }
 
-    public int GetActiveVariableBufferIndex()
+    public int GetActiveTelemetryBufferIndex()
     {
-        var bufferCount = ReadVariableBufferCount();
-        var variableBufferHeaders = ReadVariableBufferHeaders(bufferCount);
+        var bufferCount = ReadTelemetryBufferCount();
 
-        int activeBufferIndex = 0;
+        int activeBufferIndex = -1;
+        int activeBufferTickCount = -1;
 
-        for (int i = 1; i < bufferCount; i++)
+        for (int i = 0; i < bufferCount; i++)
         {
-            if (variableBufferHeaders[activeBufferIndex].TickCount < variableBufferHeaders[i].TickCount)
+            var tickCount = MemoryMarshal.Read<int>(TelemetryDataSpans.TelemetryBufferHeaderTickCount(i, _dataAccessor.Span));
+
+            if (tickCount > activeBufferTickCount)
             {
                 activeBufferIndex = i;
+                activeBufferTickCount = tickCount;
             }
         }
 
         return activeBufferIndex;
     }
 
+    public string ReadSessionInfoString()
+    {
+        var offset = MemoryMarshal.Read<int>(DataFileHeaderSpans.SessionInfoOffset(_dataAccessor.Span));
+        var length = MemoryMarshal.Read<int>(DataFileHeaderSpans.SessionInfoLength(_dataAccessor.Span));
+
+        var sessionInfoBytes = _dataAccessor.Span.Slice(offset, length);
+
+        return Encoding.UTF8.GetString(sessionInfoBytes);
+    }
+
     /// <summary>
-    /// Reads the count of variable data buffers.
+    /// Reads the number of telemetry data buffers.
     /// </summary>
     /// <returns></returns>
-    public int ReadVariableBufferCount()
+    public int ReadTelemetryBufferCount()
     {
         return MemoryMarshal.Read<int>(DataFileHeaderSpans.VariableDataBufferCount(_dataAccessor.Span));
     }
 
-    /// <summary>
-    /// Reads the length of a variable data buffer.
-    /// </summary>
-    /// <returns></returns>
-    public int ReadVariableBufferLength()
-    {
-        return MemoryMarshal.Read<int>(DataFileHeaderSpans.VariableDataBufferLength(_dataAccessor.Span));
-    }
-
-    public VariableBufferHeader[] ReadVariableBufferHeaders(int count)
+    public TelemetryBufferHeader[] ReadTelemetryBufferHeaders(int count)
     {
         if (count < 0 || count > DataFileConstants.MaxVariableBuffers)
         {
@@ -68,65 +72,64 @@ public class TelemetryDataReader : IDisposable
 
         if (count == 0)
         {
-            return Array.Empty<VariableBufferHeader>();
+            return Array.Empty<TelemetryBufferHeader>();
         }
 
-        var headers = new VariableBufferHeader[count];
-        var arraySpan = VariableDataSpans.VariableDataBufferHeaderArray(_dataAccessor.Span);
+        var headers = new TelemetryBufferHeader[count];
 
         for (int i = 0; i < count; i++)
         {
-            var offset = i * DataFileConstants.VariableDataBufferHeaderLength;
-            var headerSpan = arraySpan.Slice(offset, DataFileConstants.VariableDataBufferHeaderLength);
+            var headerSpan = TelemetryDataSpans.TelemetryBufferHeader(i, _dataAccessor.Span);
 
-            headers[i] = MemoryMarshal.Read<VariableBufferHeader>(headerSpan);
+            headers[i] = MemoryMarshal.Read<TelemetryBufferHeader>(headerSpan);
         }
 
         return headers;
-    }
-
-    public VariableHeader[] ReadVariableHeaders()
-    {
-        var dataFileHeaderReader = _dataAccessor.CreateHeaderReader();
-
-        // Read the count and offset to the array of headers
-        var variableCount = dataFileHeaderReader.ReadVariableCount();
-        var variableHeaderOffset = dataFileHeaderReader.ReadVariableHeaderOffset();
-
-        // Read the headers
-        return ReadVariableHeadersUnsafe(variableCount, variableHeaderOffset);
-    }
-
-    public VariableHeader[] ReadVariableHeaders(in DataFileHeader dataFileHeader)
-    {
-        return ReadVariableHeadersUnsafe(dataFileHeader.VariableCount, dataFileHeader.VariableHeaderOffset);
     }
 
     /// <summary>
-    /// Reads variable headers without any local bounds checking.
+    /// Reads the length of a single telemetry data buffer.
     /// </summary>
-    private VariableHeader[] ReadVariableHeadersUnsafe(int variableCount, int variableHeaderOffset)
+    /// <returns></returns>
+    public int ReadTelemetryBufferLength()
     {
-        var headers = new VariableHeader[variableCount];
+        return MemoryMarshal.Read<int>(DataFileHeaderSpans.VariableDataBufferLength(_dataAccessor.Span));
+    }
+
+    public TelemetryVariableHeader[] ReadTelemetryVariableHeaders()
+    {
+        var variableCount = MemoryMarshal.Read<int>(DataFileHeaderSpans.VariableCount(_dataAccessor.Span));
+        var variableHeaderOffset = MemoryMarshal.Read<int>(DataFileHeaderSpans.VariableHeaderOffset(_dataAccessor.Span));
+
+        // Read the headers
+        return ReadTelemetryVariableHeadersUnsafe(variableCount, variableHeaderOffset);
+    }
+
+    /// <summary>
+    /// Reads variable headers without bounds checking.
+    /// </summary>
+    private TelemetryVariableHeader[] ReadTelemetryVariableHeadersUnsafe(int variableCount, int variableHeaderOffset)
+    {
+        var headers = new TelemetryVariableHeader[variableCount];
 
         for (int i = 0; i < variableCount; i++)
         {
-            var span = VariableDataSpans.VariableHeader(i, _dataAccessor.Span, variableHeaderOffset);
+            var span = TelemetryDataSpans.VariableHeader(i, _dataAccessor.Span, variableHeaderOffset);
 
-            headers[i] = MemoryMarshal.Read<VariableHeader>(span);
+            headers[i] = MemoryMarshal.Read<TelemetryVariableHeader>(span);
         }
 
         return headers;
     }
 
-    public bool TryReceiveData(Memory<byte> memory, out int bytesRead, out int tickCount)
+    public bool TryReceiveTelemetryData(Memory<byte> memory, out int bytesRead, out int tickCount)
     {
-        int activeBufferIndex = GetActiveVariableBufferIndex();
+        int activeBufferIndex = GetActiveTelemetryBufferIndex();
 
-        return TryReceiveData(activeBufferIndex, memory, out bytesRead, out tickCount);
+        return TryReceiveTelemetryData(activeBufferIndex, memory, out bytesRead, out tickCount);
     }
 
-    public bool TryReceiveData(int dataBufferIndex, Memory<byte> memory, out int bytesRead, out int tickCount)
+    public bool TryReceiveTelemetryData(int dataBufferIndex, Memory<byte> memory, out int bytesRead, out int tickCount)
     {
         if (dataBufferIndex < 0 || dataBufferIndex >= DataFileConstants.MaxVariableBuffers)
         {
@@ -143,10 +146,10 @@ public class TelemetryDataReader : IDisposable
             return false;
         }
 
-        var bufferLength = ReadVariableBufferLength();
+        var bufferLength = ReadTelemetryBufferLength();
 
-        ref readonly var activeBufferHeader = ref MemoryMarshal.AsRef<VariableBufferHeader>(
-            VariableDataSpans.VariableDataBufferHeader(dataBufferIndex, _dataAccessor.Span));
+        ref readonly var activeBufferHeader = ref MemoryMarshal.AsRef<TelemetryBufferHeader>(
+            TelemetryDataSpans.TelemetryBufferHeader(dataBufferIndex, _dataAccessor.Span));
 
         // Copy variable data buffer
         var variableDataBufferSlice = _dataAccessor.Span.Slice(activeBufferHeader.BufferOffset, bufferLength);
