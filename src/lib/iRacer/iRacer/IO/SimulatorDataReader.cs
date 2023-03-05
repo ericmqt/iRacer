@@ -52,6 +52,11 @@ public class SimulatorDataReader : IDisposable
         return Encoding.UTF8.GetString(sessionInfoBytes);
     }
 
+    public int ReadSimulatorStatus()
+    {
+        return MemoryMarshal.Read<int>(DataFileHeaderSpans.Status(_dataAccessor.Span));
+    }
+
     /// <summary>
     /// Reads the number of telemetry data buffers.
     /// </summary>
@@ -94,6 +99,11 @@ public class SimulatorDataReader : IDisposable
     public int ReadTelemetryBufferLength()
     {
         return MemoryMarshal.Read<int>(DataFileHeaderSpans.VariableDataBufferLength(_dataAccessor.Span));
+    }
+
+    public int ReadTelemetryVariableCount()
+    {
+        return MemoryMarshal.Read<int>(DataFileHeaderSpans.VariableCount(_dataAccessor.Span));
     }
 
     public TelemetryVariableHeader[] ReadTelemetryVariableHeaders()
