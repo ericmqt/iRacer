@@ -8,8 +8,6 @@ using Microsoft.Extensions.Logging.Abstractions;
 namespace iRacer.Telemetry.Pipelines;
 public class TelemetryPipeWriter
 {
-    private const int DataFrameHeaderLength = 16;
-
     private readonly TelemetryPipeWriterLogger _logger;
 
     public TelemetryPipeWriter(SimulatorDataConnection connection)
@@ -62,11 +60,11 @@ public class TelemetryPipeWriter
             };
 
             // Get some memory that is at least as large as our data line plus the header
-            var memory = pipeWriter.GetMemory(DataFrameHeaderLength + dataLength);
+            var memory = pipeWriter.GetMemory(TelemetryDataFrameHeaderConstants.HeaderLength + dataLength);
 
             try
             {
-                var telemetryDataMemory = memory.Slice(DataFrameHeaderLength, dataLength);
+                var telemetryDataMemory = memory.Slice(TelemetryDataFrameHeaderConstants.HeaderLength, dataLength);
 
                 if (reader.TryReceiveTelemetryData(telemetryDataMemory, out var bytesRead, out var tickCount))
                 {
@@ -74,9 +72,9 @@ public class TelemetryPipeWriter
                     frameHeader.Ticks = tickCount;
 
                     // Write frame header
-                    MemoryMarshal.Write(memory[..DataFrameHeaderLength].Span, ref frameHeader);
+                    MemoryMarshal.Write(memory[..TelemetryDataFrameHeaderConstants.HeaderLength].Span, ref frameHeader);
 
-                    pipeWriter.Advance(DataFrameHeaderLength + bytesRead);
+                    pipeWriter.Advance(TelemetryDataFrameHeaderConstants.HeaderLength + bytesRead);
                 }
                 else
                 {
