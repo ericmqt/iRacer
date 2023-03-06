@@ -5,8 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace iRacer.Telemetry;
-public interface ITelemetryDataArrayDescriptor<T> : ITelemetryDataDescriptor
+public interface ITelemetryDataDescriptor<T> : ITelemetryVariableDescriptor
     where T : unmanaged
 {
-    int ArrayLength { get; }
 }

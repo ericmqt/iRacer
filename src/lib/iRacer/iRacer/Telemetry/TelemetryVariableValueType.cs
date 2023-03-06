@@ -1,6 +1,6 @@
 ﻿namespace iRacer.Telemetry;
 
-public enum TelemetryDataType : int
+public enum TelemetryVariableValueType : int
 {
     Char = 0,
     Bool = 1,
