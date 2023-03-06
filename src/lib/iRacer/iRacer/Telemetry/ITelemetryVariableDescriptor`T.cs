@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace iRacer.Telemetry;
 
-namespace iRacer.Telemetry;
-public interface ITelemetryDataDescriptor<T> : ITelemetryVariableDescriptor
+public interface ITelemetryVariableDescriptor<T> : ITelemetryVariableDescriptor
     where T : unmanaged
 {
 }
