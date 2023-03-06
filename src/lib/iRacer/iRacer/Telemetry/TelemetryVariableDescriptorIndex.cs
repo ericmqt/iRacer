@@ -8,11 +8,11 @@ public readonly struct TelemetryVariableDescriptorIndex : IComparable<TelemetryV
     {
         _value = index;
     }
+
     public int CompareTo(TelemetryVariableDescriptorIndex other)
     {
         return _value.CompareTo(other._value);
     }
-
 
     public bool Equals(TelemetryVariableDescriptorIndex other)
     {
