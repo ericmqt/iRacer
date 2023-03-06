@@ -16,7 +16,7 @@ public class TelemetryVariableDescriptorProviderBuilder
     /// <returns></returns>
     public ITelemetryVariableDescriptorProvider Build()
     {
-        return new TelemetryVariableDescriptorProvider(_variableDescriptors);
+        return new TelemetryVariableDescriptorProvider(_variableDescriptors.ToList());
     }
 
     /// <summary>
