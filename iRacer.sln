@@ -5,8 +5,6 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "lib", "lib", "{EA12305E-A0E4-4F00-9ED4-144622C12C67}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "iRacer", "src\lib\iRacer\iRacer\iRacer.csproj", "{5E692DE6-ADDF-444B-8EBA-F7EEECDEB13A}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{144D07AB-3C86-4CF7-BC70-8A415D84262B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{CB1FE45F-8D4B-420C-8731-1433F1E40DBE}"
@@ -17,16 +15,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "iRacer.Tools.Telemetry", "s
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "iRacer.Tests", "src\tests\iRacer.Tests\iRacer.Tests.csproj", "{EC5074FF-764D-4424-817F-CD4FC1CEEABA}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "iRacer", "src\lib\iRacer\iRacer.csproj", "{E6076BFF-F0F9-486E-9F8A-8F1B0C6EE437}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{5E692DE6-ADDF-444B-8EBA-F7EEECDEB13A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5E692DE6-ADDF-444B-8EBA-F7EEECDEB13A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5E692DE6-ADDF-444B-8EBA-F7EEECDEB13A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5E692DE6-ADDF-444B-8EBA-F7EEECDEB13A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{79C792E6-ABA8-42F2-A5B5-09454C01044F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{79C792E6-ABA8-42F2-A5B5-09454C01044F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{79C792E6-ABA8-42F2-A5B5-09454C01044F}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -39,15 +35,19 @@ Global
 		{EC5074FF-764D-4424-817F-CD4FC1CEEABA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EC5074FF-764D-4424-817F-CD4FC1CEEABA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EC5074FF-764D-4424-817F-CD4FC1CEEABA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E6076BFF-F0F9-486E-9F8A-8F1B0C6EE437}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E6076BFF-F0F9-486E-9F8A-8F1B0C6EE437}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E6076BFF-F0F9-486E-9F8A-8F1B0C6EE437}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E6076BFF-F0F9-486E-9F8A-8F1B0C6EE437}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{5E692DE6-ADDF-444B-8EBA-F7EEECDEB13A} = {EA12305E-A0E4-4F00-9ED4-144622C12C67}
 		{79C792E6-ABA8-42F2-A5B5-09454C01044F} = {CB1FE45F-8D4B-420C-8731-1433F1E40DBE}
 		{7922F938-BACB-4556-8AA9-0CAC05652ED1} = {EA12305E-A0E4-4F00-9ED4-144622C12C67}
 		{EC5074FF-764D-4424-817F-CD4FC1CEEABA} = {144D07AB-3C86-4CF7-BC70-8A415D84262B}
+		{E6076BFF-F0F9-486E-9F8A-8F1B0C6EE437} = {EA12305E-A0E4-4F00-9ED4-144622C12C67}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DF1C53D0-C31D-406E-AD9D-3CB5E30979CD}

@@ -22,7 +22,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\..\lib\iRacer\iRacer\iRacer.csproj" />
+	  <ProjectReference Include="..\..\lib\iRacer\iRacer.csproj" />
 	</ItemGroup>
 
 </Project>
